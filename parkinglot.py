@@ -53,7 +53,7 @@ class ParkingSpotManager:
     def park_vehicle(self,spot, vehicle):
         spot.park(vehicle)
         
-    def unpark_vehicle(self):
+    def unpark_vehicle(self,spot):
         spot.unpark()
     
 
@@ -159,16 +159,19 @@ class CreditCardPayment(PaymentStrategy):
     
     def pay(self, amount):
         print(f"Making payment of {amount} via credit card")
+        return "SUCEESS"
         
 class DebitCardPayment(PaymentStrategy):
     
     def pay(self, amount):
         print(f"Making payment of {amount} via debit card")
+        return "SUCCESS"
   
 class UPIPayment(PaymentStrategy):
     
     def pay(self, amount):
         print(f"Making payment of {amount} via upi")  
+        return "SUCCESS"
 
 class Reciept:
     def __init__(self,id,amount,payment_status):
@@ -186,13 +189,18 @@ class Exit:
         return self.spot_manager.payment_strategy.calculate_price(self.ticket)
     
     def make_payment(self, amount,payment_strategy):
-        payment_strategy.pay(amount)
+        return payment_strategy.pay(amount)
     
-    def generate_reciept(self):
-        amount self.calculate_price()
-        return Reciept()
+    def generate_reciept(self,amount, payment_status):
+        return Reciept(amount,payment_status)
     
-    def free_spot(self):
-        pass
+    def free_spot(self,spot):
+        self.spot_manager.unpark_vehicle(spot)
     
+    
+    def process_exit(self, payment_strategy):
+        amount = self.calculate_price()
+        payment_status = self.make_payment(amount, payment_strategy)
+        self.generate_reciept(amount,payment_status)
+        self.free_spot(self.ticket.spot)
         
